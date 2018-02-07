@@ -22,7 +22,23 @@ namespace :yarn do
     end
   end
 
+  desc <<-DESC
+        Run the package task via yarn. By default, build \
+        will be execute.
+    DESC
+  task :run do
+    on roles fetch(:yarn_roles) do
+      within fetch(:yarn_target_path, release_path) do
+        options = [
+          fetch(:yarn_tasks, 'build')
+        ]
+        execute fetch(:yarn_bin), :run, options
+      end
+    end
+  end
+
   before 'deploy:updated', 'yarn:install'
+  before 'deploy:updated', 'yarn:run'
 
   desc <<-DESC
         Remove extraneous packages via yarn. This command is executed within \
@@ -68,6 +84,7 @@ end
 
 namespace :load do
   task :defaults do
+    set :yarn_tasks, nil
     set :yarn_flags, %w(--production)
     set :yarn_prune_flags, ''
     set :yarn_roles, :all
