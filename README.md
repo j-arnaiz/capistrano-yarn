@@ -39,6 +39,20 @@ set :yarn_roles, :all                                     # default
 set :yarn_env_variables, {}                               # default
 ```
 
+Alternatively, if you want to have control on the execution of yarn tasks
+
+```ruby
+# Capfile
+require capistrano/yarn/without_hooks
+```
+
+You can then add the hooks on a per deploy script basis
+
+```ruby
+# config/deploy/my_stage_with_npm.rb
+before 'deploy:updated', 'yarn:install'
+```
+
 ### Dependencies
 
 yarn allows for normal `dependencies` and `devDependencies`. By default this gem uses `'--production --silent --no-progress'` as the install flags which will **only** install `dependencies` and skip `devDependencies`. If you want your `devDependencies` installed as well, then remove `--production`.
